@@ -7,7 +7,7 @@
  */
 
 import React, { Component } from 'react';
-import { Container,Text,Header, Body, Content, Item, Input, Button,Label,ListItem} from 'native-base'
+import { Container,Text,Header, Body, Content, Item, Input, Button,Label,ListItem, Left, Right} from 'native-base'
 import {StyleSheet,Image,TouchableOpacity,View,TextInput,TouchableHighlight,Dimensions,FlatList} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import axios from 'axios'
@@ -61,7 +61,14 @@ class customer extends Component{
    allPage(image) {
     return (
       <ListItem style={styles.listItemContainer}>
+        <Item>
+        <Left>
         <Text>{image.name}</Text>
+        </Left>
+        <Right>
+        <Label>{image.identity_number}</Label>
+        </Right>
+        </Item>
       </ListItem>
      
     );

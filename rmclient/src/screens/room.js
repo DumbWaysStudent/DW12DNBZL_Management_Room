@@ -14,16 +14,18 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage'
 import {ip} from '../services/ip'
 import {connect} from 'react-redux'
+import Modal from 'react-native-modal'
 import * as actionRooms from '../_actions/rooms'
 
 class room extends Component{
   constructor(props){
     super(props)
     this.state={
-      eye : true,
+      modal : false,
       string : '',
       allow : true,
       pass: '',
+      update : false,
       button_status : true,
       token : '',
       tokening : '',
@@ -63,14 +65,20 @@ class room extends Component{
         <Text>{image.name}</Text>
         </Button>
       </ListItem>
-     
+
     );
   }
 
+  store(){
+    this.props.postRooms(this.state.newtitle)
+    this.setState({modal: false})
+    this.getThings()
+  }
   render() {
     console.log('IINI ROOMNYAAAA',this.props.rooms.rooms.data)
     return (
      <Container>
+       <View>
       <FlatList
          style={styles.allContainer}
           data={this.props.rooms.rooms.data} 
@@ -78,6 +86,38 @@ class room extends Component{
           keyExtractor={item => item.id}
           numColumns= {4}>
       </FlatList> 
+      <View style={{justifyContent: 'center'}}>
+      <Button style={{width : 100}} onPress ={()=> this.setState({modal : true})}>
+        <Text>TAMBAH</Text>
+      </Button>
+      </View>
+      <Modal isVisible={this.state.modal}>
+          <View style={styles.containerform}>
+              <View>
+              <View style={styles.inputContainer}>
+          <TextInput style={styles.inputs}
+              placeholder="Title"
+              placeholderTextColor='#673ab7'
+              keyboardType="email-address"
+              underlineColorAndroid='transparent'
+              onChangeText={(email) => this.setState({newtitle : email})}
+              />
+        </View>
+        <View style={{justifyContent:'center'}}>
+        <TouchableOpacity onPress={this.handleChoosePhoto}>
+              <Icon name="camera" size={20}></Icon>
+              </TouchableOpacity>
+              </View>
+              </View>
+              <Button onPress={()=>this.state.update == true ? this.edit() :this.store()} style={styles.button}>
+                 <Text style={{color: 'black'}}>ADD ROOM</Text>
+             </Button>
+             <TouchableOpacity onPress={()=>this.setState({modal: false})}>
+               <Text>Close</Text>
+             </TouchableOpacity>
+          </View>
+        </Modal>
+      </View>
     </Container>
     );
   }
@@ -93,6 +133,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return{
     getRooms:() => dispatch(actionRooms.handleGetRooms()),
+    postRooms:(name) => dispatch(actionRooms.handlePostRooms(name))
   }
  // getAllToon
 }

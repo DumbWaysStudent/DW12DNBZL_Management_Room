@@ -8,3 +8,9 @@ export const handleGetRooms= () => ({
 });
 
 
+export const handlePostRooms= (name) => ({
+  type: types.POST_ROOMS,
+  payload: axios.post(`${ip}/rooms`,{name : name})
+});
+
+

@@ -4,6 +4,7 @@ const initialState = {
   isLoading: false,
   isError: false,
   isSuccess: false,
+  yuhu : false,
   rooms: []
 };
 
@@ -29,7 +30,8 @@ export default function reducerRooms(state = initialState, action) {
         ...state,
         isLoading: false,
         isSuccess : true,
-      } 
+        yuhu : !state.yuhu
+      }
     case `${types.GET_ROOMS}_REJECTED`:
     case `${types.POST_ROOMS}_REJECTED`:  
       return {
