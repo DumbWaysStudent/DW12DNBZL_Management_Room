@@ -1,0 +1,1 @@
+export const ip = `http://192.168.0.2:5000/api/v1`
