@@ -7,15 +7,16 @@
  */
 
 import React, { Component } from 'react';
-import { Text,Toast, Root} from 'native-base'
-import {StyleSheet,Image,TouchableOpacity,View,TextInput,TouchableHighlight,Dimensions} from 'react-native'
+import { Container,Text,Header, Body, Content, Item, Input, Button,Label,ListItem} from 'native-base'
+import {StyleSheet,Image,TouchableOpacity,View,TextInput,TouchableHighlight,Dimensions,FlatList} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage'
 import {ip} from '../services/ip'
+import {connect} from 'react-redux'
+import * as actionCustomers from '../_actions/customers'
 
-
-export default class customer extends Component{
+class customer extends Component{
   constructor(props){
     super(props)
     this.state={
@@ -31,16 +32,75 @@ export default class customer extends Component{
    
   }
 
-
+  async componentDidMount(){
+    // await this.retrieveSessionToken()
+     this.getThings()
+    
+   }
+  
+   getThings(){
+     this.props.getCustomers()
+   }
+ 
+   async retrieveSessionToken() {
+     try {
+       const tokening = await AsyncStorage.getItem('userToken');
+       if (tokening !== null) {
+         console.log("Session token",tokening);
+         this.setState({token : tokening})
+       }else{
+         console.log("Youre not Logged in Yet");
+         alert('must login first')
+         this.props.navigation.navigate('Login')
+       }
+      }catch (e) {
+        console.log(error)
+      }
+   }
+ 
+   allPage(image) {
+    return (
+      <ListItem style={styles.listItemContainer}>
+        <Text>{image.name}</Text>
+      </ListItem>
+     
+    );
+  }
 
   render() {
+    console.log('IINI CUSTOMERSNYAAAA',this.props.customers.customers)
     return (
-     <View>
-         <Text>INI CUSTOMER</Text>
-     </View>
+     <Container>
+      <FlatList
+         style={styles.allContainer}
+          data={this.props.customers.customers.data} 
+          renderItem={({ item }) => this.allPage(item)}
+          keyExtractor={item => item.id}>
+      </FlatList> 
+    </Container>
     );
   }
 };
+
+
+const mapStateToProps = state => {
+  return {
+   // toons: state.toons
+   customers : state.customers
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return{
+    getCustomers:() => dispatch(actionCustomers.handleGetCustomers()),
+  }
+ // getAllToon
+}
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(customer)
+
 
 const styles = StyleSheet.create({
     container: {

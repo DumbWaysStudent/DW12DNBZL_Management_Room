@@ -23,6 +23,8 @@ import checkin from './src/screens/checkin'
 import room from './src/screens/room'
 import customer from './src/screens/customers'
 import setting from './src/screens/setting'
+import {Provider} from 'react-redux'
+import {store} from './src/_redux/store'
 
 const switchContainer = createSwitchNavigator({
   login: loginScreen,
@@ -43,7 +45,7 @@ const switchContainer = createSwitchNavigator({
     })
   }
 },{
-  initialRouteName : 'login'
+  initialRouteName : 'checkin'
 }
 )
 
@@ -52,7 +54,9 @@ const AppContainer = createAppContainer(switchContainer)
 export default class App extends Component{
   render(){
   return (
+    <Provider store={store}>
         <AppContainer/>
+        </Provider>
       )
   }
 };

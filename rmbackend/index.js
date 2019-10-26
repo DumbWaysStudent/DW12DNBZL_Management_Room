@@ -22,13 +22,13 @@ app.group("/api/v1", (router) => {
     router.post('/login', AuthController.login)
     router.post('/register', AuthController.register)
 
-    router.get('/customers', authenticated,CustomersController.index)
-    router.post('/customers', authenticated,CustomersController.store)
-    router.put('/customers/:customer_id', authenticated,CustomersController.update)
+    router.get('/customers', CustomersController.index)
+    router.post('/customers', CustomersController.store)
+    router.put('/customers/:customer_id', CustomersController.update)
 
-    router.get('/rooms', authenticated,RoomsController.index)
-    router.post('/rooms', authenticated,RoomsController.store)
-    router.put('/rooms/:room_id', authenticated,RoomsController.update)
+    router.get('/rooms', RoomsController.index)
+    router.post('/rooms', RoomsController.store)
+    router.put('/rooms/:room_id', RoomsController.update)
 
     router.get('/checkin', OrdersController.index)
     router.post('/checkin', OrdersController.store)

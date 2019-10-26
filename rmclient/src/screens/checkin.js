@@ -9,9 +9,16 @@
 import React, { Component } from 'react';
 import { Container,Header,Text, Body, Content, Item, Input, Button,Label,ListItem} from 'native-base'
 import {Image,View,StyleSheet,Dimensions,ScrollView,FlatList,SafeAreaView,TouchableHighlight} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome'
+import axios from 'axios'
+import {ip} from '../services/ip'
+import {connect} from 'react-redux'
+
+import AsyncStorage from '@react-native-community/async-storage'
+import * as actionOrders from '../_actions/orders'
 
 
-export default class checkin extends Component{
+class checkin extends Component{
   constructor(props){
     super(props)
     this.state={
@@ -26,19 +33,81 @@ export default class checkin extends Component{
     }
   }
   
+  async componentDidMount(){
+   // await this.retrieveSessionToken()
+    this.getThings()
+   
+  }
  
+  getThings(){
+    this.props.getOrders()
+  }
+
+  async retrieveSessionToken() {
+    try {
+      const tokening = await AsyncStorage.getItem('userToken');
+      if (tokening !== null) {
+        console.log("Session token",tokening);
+        this.setState({token : tokening})
+      }else{
+        console.log("Youre not Logged in Yet");
+        alert('must login first')
+        this.props.navigation.navigate('Login')
+      }
+     }catch (e) {
+       console.log(error)
+     }
+  }
+
+  allPage(image) {
+    return (
+      <ListItem>
+        {(image.is_booked)?
+        <Button warning style={{backgroudColor : 'green'}}>
+        <Text style={styles.tittleall}>{image.roomid.name}</Text>
+        </Button> :
+        <Button success style={{backgroudColor : 'red'}}>
+        <Text style={styles.tittleall}>{image.roomid.name}</Text>
+        </Button>}
+        
+      </ListItem>
+     
+    );
+  }
+
   render() {
+    console.log('IINI DATANYAAA',this.props.orders.orders.data)
     return (
       <Container>
-        <Content contentContainerStyle={styles.container}>
-          <Text>INI CHECK IN</Text>
-        </Content>
-        
+        <FlatList
+           style={styles.allContainer}
+            data={this.props.orders.orders.data} 
+            renderItem={({ item }) => this.allPage(item)}
+            keyExtractor={item => item.id}
+            numColumns= {3}>
+        </FlatList> 
       </Container>
     )
   }
 };
 
+const mapStateToProps = state => {
+  return {
+   // toons: state.toons
+   orders : state.orders
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return{
+    getOrders:() => dispatch(actionOrders.handleGetOrders()),
+  }
+ // getAllToon
+}
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(checkin)
 
 const styles = StyleSheet.create({
   container: {
