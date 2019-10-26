@@ -1,15 +1,39 @@
-//instantiate express module
-const express = require('express')
-//use express in app variable
-const app = express()
-//define the server port
-const port = 5000
+var express = require('express')
+const bodyParser = require('body-parser')
+require('express-group-routes')
+const multer  = require('multer'); 
 
+var app = express()
+app.use(bodyParser.json())
+const port = Number(process.env.PORT || 5000)
 //create the homepage route
-app.get('/', (req, res) => {
-    //res means, response, and it send string "Hello Express!" to the API
-    res.send('Hello Express!')
-})    
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+const AuthController = require('./controllers/Auth')
+const RoomsController = require('./controllers/Rooms')
+const CustomersController = require('./controllers/Customers')
+const OrdersController = require('./controllers/Orders')
+
+
+const { authenticated } = require('./middleware')
+
+app.group("/api/v1", (router) => {
+    router.post('/login', AuthController.login)
+    router.post('/register', AuthController.register)
+
+    router.get('/customers', authenticated,CustomersController.index)
+    router.post('/customers', authenticated,CustomersController.store)
+    router.put('/customers/:customer_id', authenticated,CustomersController.update)
+
+    router.get('/rooms', authenticated,RoomsController.index)
+    router.post('/rooms', authenticated,RoomsController.store)
+    router.put('/rooms/:room_id', authenticated,RoomsController.update)
+
+    router.get('/checkin', OrdersController.index)
+    router.post('/checkin', OrdersController.store)
+    router.put('/checkin/:order_id', OrdersController.update)
+})
 
 //when this nodejs app executed, it will listen to defined port
 app.listen(port, () => console.log(`Listening on port ${port}!`))

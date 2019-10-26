@@ -4,10 +4,11 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING
   }, {});
   rooms.associate = function(models) {
+    
     // associations can be defined here
     rooms.belongsToMany(models.customers,{
       through: 'orders',
-      as : 'room',
+      as : 'roomid',
       foreignKey : 'room_id',
       otherKey : 'customer_id'
     })

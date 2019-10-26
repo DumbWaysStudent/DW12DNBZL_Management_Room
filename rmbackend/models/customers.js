@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     customers.belongsToMany(models.rooms,{
       through: 'orders',
-      as : 'customer',
+      as : 'customerid',
       foreignKey : 'customer_id',
       otherKey : 'room_id'
     })

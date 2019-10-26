@@ -9,11 +9,25 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       customer_id: {
-        type: Sequelize.INTEGER
-      },
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'customers',
+            key: 'id'
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade'
+    },
       room_id: {
-        type: Sequelize.INTEGER
-      },
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'rooms',
+            key: 'id'
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade'
+    },
       is_done: {
         type: Sequelize.BOOLEAN
       },

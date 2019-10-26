@@ -4,7 +4,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
       return queryInterface.bulkInsert('customers', [{
         name: 'John Doe',
-        identity: 'kmzwayw1aa',
+        identity_number: 'kmzwayw1aa',
         phone_number: '080809080707',
         image : 'aku.jpg',
         createdAt : new Date(),
@@ -12,7 +12,7 @@ module.exports = {
       },
       {
         name: 'Jogasdadwa',
-        identity: 'kmzway87aa',
+        identity_number: 'kmzway87aa',
         phone_number: '0808112380707',
         image : 'kamu.jpg',
         createdAt : new Date(),

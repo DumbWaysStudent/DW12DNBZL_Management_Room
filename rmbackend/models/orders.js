@@ -10,6 +10,14 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   orders.associate = function(models) {
     // associations can be defined here
+    orders.belongsTo(models.customers, {
+      as : 'customerid',
+      foreignKey: 'customer_id',
+    }),
+    orders.belongsTo(models.rooms, {
+      as : 'roomid',
+      foreignKey: 'room_id',
+    })
   };
   return orders;
 };
