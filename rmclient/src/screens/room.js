@@ -7,7 +7,7 @@
  */
 
 import React, { Component } from 'react';
-import { Container,Text,Header, Body, Content, Item, Input, Button,Label,ListItem} from 'native-base'
+import { Container,Text,Header, Body, Content, Left, Input, Button,Label,ListItem,Title,Right} from 'native-base'
 import {StyleSheet,Image,TouchableOpacity,View,TextInput,TouchableHighlight,Dimensions,FlatList} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import axios from 'axios'
@@ -29,7 +29,9 @@ class room extends Component{
       button_status : true,
       token : '',
       tokening : '',
-      userID : 0
+      userID : 0,
+      tempid : 0,
+      tempname : ''
     }
   }
   async componentDidMount(){
@@ -60,56 +62,66 @@ class room extends Component{
  
    allPage(image) {
     return (
-      <ListItem>
-        <Button success style={{backgroudColor : 'red'}}>
+      <ListItem style={{borderColor : 'white'}}>
+        <Button success style={styles.roombutton} onPress={()=> this.edit(image.id,image.name)}>
         <Text>{image.name}</Text>
         </Button>
       </ListItem>
-
     );
   }
 
+edit(id,name){
+  this.setState({modal: true,update: true,tempid : id , tempname: name})
+
+}
+
   store(){
-    this.props.postRooms(this.state.newtitle)
+    {(!this.state.update)?
+    this.props.postRooms(this.state.newtitle):
+    this.props.editRooms(this.state.tempid,this.state.newtitle)}
     this.setState({modal: false})
-    this.getThings()
+
   }
   render() {
-    console.log('IINI ROOMNYAAAA',this.props.rooms.rooms.data)
+    const {rooms} = this.props
     return (
      <Container>
+        <Header>
+          <Left>
+            <Button transparent>
+              <Icon name='arrow-left' size={20} />
+            </Button>
+          </Left>
+          <Body>
+            <Title>Room List</Title>
+          </Body>
+        </Header>
        <View>
       <FlatList
          style={styles.allContainer}
-          data={this.props.rooms.rooms.data} 
+          data={rooms.rooms} 
           renderItem={({ item }) => this.allPage(item)}
           keyExtractor={item => item.id}
           numColumns= {4}>
       </FlatList> 
-      <View style={{justifyContent: 'center'}}>
+      <View style={{alignSelf: 'center'}}>
       <Button style={{width : 100}} onPress ={()=> this.setState({modal : true})}>
         <Text>TAMBAH</Text>
       </Button>
       </View>
-      <Modal isVisible={this.state.modal}>
+      <Modal isVisible={this.state.modal}
+      animationType="slide"
+      transparent={true}>
           <View style={styles.containerform}>
-              <View>
               <View style={styles.inputContainer}>
           <TextInput style={styles.inputs}
-              placeholder="Title"
+              placeholder="Room Name"
               placeholderTextColor='#673ab7'
-              keyboardType="email-address"
               underlineColorAndroid='transparent'
               onChangeText={(email) => this.setState({newtitle : email})}
               />
         </View>
-        <View style={{justifyContent:'center'}}>
-        <TouchableOpacity onPress={this.handleChoosePhoto}>
-              <Icon name="camera" size={20}></Icon>
-              </TouchableOpacity>
-              </View>
-              </View>
-              <Button onPress={()=>this.state.update == true ? this.edit() :this.store()} style={styles.button}>
+              <Button onPress={()=>this.store()} style={styles.button}>
                  <Text style={{color: 'black'}}>ADD ROOM</Text>
              </Button>
              <TouchableOpacity onPress={()=>this.setState({modal: false})}>
@@ -133,7 +145,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return{
     getRooms:() => dispatch(actionRooms.handleGetRooms()),
-    postRooms:(name) => dispatch(actionRooms.handlePostRooms(name))
+    postRooms:(name) => dispatch(actionRooms.handlePostRooms(name)),
+    editRooms:(id,name) => dispatch(actionRooms.handleEditRooms(id,name))
   }
  // getAllToon
 }
@@ -148,17 +161,11 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: '#673ab7',
     },
-    containerlogo :{
-      alignItems: 'center',
-      marginTop : 40,
-      backgroundColor: '#673ab7',
-      marginBottom : 30,
-      width : Dimensions.get('window').width
-    },
     containerform : {
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#673ab7',
+      height  : 200
     },
     inputContainer: {
         
@@ -174,7 +181,7 @@ const styles = StyleSheet.create({
     
     inputs:{
         height:45,
-        marginLeft:0,
+        marginLeft:20,
         borderBottomColor: '#FFFFFF',
         flex:1,
     },
@@ -223,5 +230,12 @@ const styles = StyleSheet.create({
     },
     Icon :{
       marginRight : 10
+    },
+    roombutton:{
+      height : 70,
+      width : 70,
+      marginRight : -22,
+      marginBottom : -15,
+      justifyContent : 'center',
     }
   });

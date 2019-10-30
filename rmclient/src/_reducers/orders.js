@@ -17,12 +17,11 @@ export default function reducerOrders(state = initialState, action) {
       };
 
     case `${types.GET_ORDERS}_FULFILLED`:
-     
       return {
         ...state,
         isLoading: false,
         isSuccess: true,
-        orders: action.payload.data
+        orders: action.payload.data.data
       };
     case `${types.POST_ORDERS}_FULFILLED`:
       return {

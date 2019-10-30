@@ -1,5 +1,8 @@
 const models = require('../models')
+const Customers = models.customers
 const Rooms = models.rooms
+const Orders = models.orders
+
 
 
 const ip = `http://192.168.1.41:5000/`
@@ -7,47 +10,67 @@ const ip = `http://192.168.1.41:5000/`
 exports.index = (req, res) => {
     let query
     query = Rooms.findAll({
+        include: [{
+            model: Customers,
+            as: "customerid"
+        },{
+            model: Orders,
+            as: "orderid"
+        }]
     })
-    query.then(toons=>res.send({
+    query.then(data=>res.send({
         message : "success",
-        data : toons
-    }))
+        data
+    })
+    )
 }
 
 exports.store = (req, res) => {
-    const data ={
+    const datas ={
         name : req.body.name,
+        order_id : null,
+        customer_id : null
     }
-    Rooms.create(data).then(toon=> {
+    Rooms.create(datas).then(data=> 
         res.send({
             message: "success",
-            data : toon
+            data
         })
-    })
+    )
 }
 
 exports.update = (req, res) => {
     const data ={
         name : req.body.name,
+        
     }
     Rooms.update(
         data,
         {where: {id: req.params.room_id}}
-    ).then(toon=> {
-        res.send({
-            message: "success",
-            data : toon
-        })
+    ).then(()=> Rooms.findAll({
+        include: [{
+            model: Customers,
+            as: "customerid"
+        },{
+            model: Orders,
+            as: "orderid"
+        }]
     })
+    .then(data=>res.send({
+        message : "success",
+        data
+    })
+    )
+    )
 }
 
 exports.delete = (req, res) => {
     Rooms.destroy({where: {
         id : req.params.room_id}
-        }).then(toon=> {
+        }).then(data=> {
         res.send({
             message: "successss delete",
-            data :toon
+            data
         })
     })
 }

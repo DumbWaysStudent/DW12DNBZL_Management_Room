@@ -11,6 +11,26 @@ module.exports = {
       name: {
         type: Sequelize.STRING
       },
+      order_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'orders',
+            key: 'id'
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade'
+      },
+      customer_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'customers',
+            key: 'id'
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

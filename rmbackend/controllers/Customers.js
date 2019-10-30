@@ -8,10 +8,11 @@ exports.index = (req, res) => {
     let query
     query = Customers.findAll({
     })
-    query.then(toons=>res.send({
+    query.then(data=>res.send({
         message : "success",
-        data : toons
-    }))
+        data
+    })
+    )
 }
 
 exports.store = (req, res) => {
@@ -21,10 +22,10 @@ exports.store = (req, res) => {
         identity_number : req.body.identity_number,
         phone_number: req.body.phone_number
     }
-    Customers.create(data).then(toon=> {
+    Customers.create(data).then(data=> {
         res.send({
             message: "success",
-            data : toon
+            data
         })
     })
 }
@@ -39,21 +40,23 @@ exports.update = (req, res) => {
     Customers.update(
         data,
         {where: {id: req.params.customer_id}}
-    ).then(toon=> {
-        res.send({
-            message: "success",
-            data : toon
-        })
+    ).then(()=> 
+        Customers.findAll({})
+    .then(data=>res.send({
+        message : "success",
+        data
     })
+    )
+    )
 }
 
 exports.delete = (req, res) => {
     Customers.destroy({where: {
         id : req.params.customer_id}
-        }).then(toon=> {
+        }).then(data=> {
         res.send({
             message: "successss delete",
-            data :toon
+            data
         })
     })
 }

@@ -31,8 +31,8 @@ app.group("/api/v1", (router) => {
     router.put('/rooms/:room_id', RoomsController.update)
 
     router.get('/checkin', OrdersController.index)
-    router.post('/checkin', OrdersController.store)
-    router.put('/checkin/:order_id', OrdersController.update)
+    router.post('/checkin/room/:room_id', OrdersController.store)
+    router.put('/checkout/:order_id', OrdersController.update)
 })
 
 //when this nodejs app executed, it will listen to defined port

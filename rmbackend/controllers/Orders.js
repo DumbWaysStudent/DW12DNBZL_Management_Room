@@ -8,68 +8,87 @@ const ip = `http://192.168.1.41:5000/`
 
 exports.index = (req, res) => {
     let query
-    query = Orders.findAll({
+    query = Rooms.findAll({
         include: [{
             model: Customers,
             as: "customerid"
         },{
-            model: Rooms,
-            as: "roomid"
-        }
-        ]
+            model: Orders,
+            as: "orderid"
+        }]
     })
-    query.then(toons=>res.send({
+    query.then(data=>res.send({
         message : "success",
-        data : toons
-    }))
+        data
+    })
+    )
 }
 
 exports.store = (req, res) => {
     const data ={
-        customer_id : req.body.customer_id,
-        //image : ip + req.file.path,
-        room_id : req.body.room_id,
         is_done : false,
         is_booked : true,
         duration : req.body.duration,
-
+        order_end_time : req.body.order_end_time
     }
-    Orders.create(data).then(toon=> {
-        res.send({
-            message: "success",
-            data : toon
+    Orders.create(data).then((data)=>{
+        Rooms.update(
+            {
+                order_id : data.id,
+                customer_id : req.body.customer_id
+            },
+            {where: {id: req.params.room_id}}
+        ).then(()=> Rooms.findAll({
+            include: [{
+                model: Customers,
+                as: "customerid"
+            },{
+                model: Orders,
+                as: "orderid"
+            }]
         })
-    })
+        .then(data=>res.send({
+            message : "success",
+            data
+        })
+        )
+        )
+    }
+    )
 }
 
 exports.update = (req, res) => {
     const data ={
-        customer_id : req.body.customer_id,
-        //image : ip + req.file.path,
-        room_id : req.body.room_id,
-        is_done : req.body.is_done,
-        is_booked : req.body.is_booked,
-        duration : req.body.duration,
-
+        is_done : true,
+        is_booked : false,
     }
     Orders.update(
         data,
-        {where: {id: req.params.customer_id}}
-    ).then(toon=> {
-        res.send({
-            message: "success",
-            data : toon
-        })
+        {where: {id: req.params.order_id}}
+    ).then(()=> Rooms.findAll({
+        include: [{
+            model: Customers,
+            as: "customerid"
+        },{
+            model: Orders,
+            as: "orderid"
+        }]
     })
+    .then(data=>res.send({
+        message : "success",
+        data
+    })
+    )
+    )
 }
 
 exports.delete = (req, res) => {
     Orders.destroy({where: {
         id : req.params.customer_id}
-        }).then(toon=> {
+        }).then(data=> {
         res.send({
             message: "successss delete",
-            data :toon
+            data
         })
     })
 }

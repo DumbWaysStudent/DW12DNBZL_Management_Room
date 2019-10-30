@@ -7,7 +7,7 @@
  */
 
 import React, { Component } from 'react';
-import { Text,Toast, Root} from 'native-base'
+import { Container,Text,Header,Left ,Right, Content, Item, Input, Button,Label,ListItem} from 'native-base'
 import {StyleSheet,Image,TouchableOpacity,View,TextInput,TouchableHighlight,Dimensions} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import axios from 'axios'
@@ -19,11 +19,6 @@ export default class setting extends Component{
   constructor(props){
     super(props)
     this.state={
-      eye : true,
-      string : '',
-      allow : true,
-      pass: '',
-      button_status : true,
       token : '',
       tokening : '',
       userID : 0
@@ -31,13 +26,32 @@ export default class setting extends Component{
    
   }
 
-
-
   render() {
     return (
-     <View>
-         <Text>INI SETTING</Text>
-     </View>
+      <Container>
+      <Content>
+        <Item style={styles.photoiconcontainer}>
+          <Left>
+            <Image style={styles.image}  source={{uri : 'https://akcdn.detik.net.id/community/media/visual/2019/04/03/dac43146-7dd4-49f4-89ca-d81f57b070fc.jpeg?w=770&q=90'}}></Image>
+            </Left>
+        </Item>
+        <View style={styles.createWT}>
+          <TouchableOpacity style={{width:Dimensions.get('window').width}} onPress={()=>this.props.navigation.navigate("web_creation")}>
+              <Item style={{borderColor: 'white'}}>
+              <Right>
+              <Icon name="angle-right" size={30} style={styles.createcomicicon}/>
+              </Right>
+              </Item>
+          </TouchableOpacity>  
+        </View>
+        <Item style={styles.createWT}>
+          <TouchableOpacity style={{width:Dimensions.get('window').width}} onPress={() => this.logout()}> 
+          <Text style={styles.menuText}>Log Out</Text>
+          </TouchableOpacity> 
+        </Item>
+      </Content>
+      
+    </Container>
     );
   }
 };
@@ -76,6 +90,19 @@ const styles = StyleSheet.create({
         marginLeft:0,
         borderBottomColor: '#FFFFFF',
         flex:1,
+    },
+    photoiconcontainer:{
+      justifyContent:'center',
+      alignItems:'center',
+      backgroundColor: '#673ab7',
+      borderBottomWidth: 2,
+      borderColor:'black'
+    },
+    image:{
+      width: 100, 
+      height: 100, 
+      borderRadius: 100/ 2,
+      backgroundColor:'white'
     },
     inputIcon:{
       marginLeft:15,
