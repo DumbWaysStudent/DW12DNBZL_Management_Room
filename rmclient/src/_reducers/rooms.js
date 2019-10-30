@@ -2,6 +2,7 @@ import * as types from '../_redux/types'
 
 const initialState = {
   isLoading: false,
+  isredLoading : false,
   isError: false,
   isSuccess: false,
   rooms: []
@@ -9,25 +10,31 @@ const initialState = {
 
 export default function reducerRooms(state = initialState, action) {
   switch (action.type) {
+  
+    case `${types.EDIT_ORDERS}_PENDING`:
+    case `${types.POST_ORDERS}_PENDING`:
+        return {
+          ...state,
+          isRedLoading: true,
+        };
     case `${types.GET_ROOMS}_PENDING`:
     case `${types.GET_ORDERS}_PENDING`:
-    case `${types.POST_ORDERS}_PENDING`:
     case `${types.POST_ROOMS}_PENDING`:  
     case `${types.EDIT_ROOMS}_PENDING`:  
-    case `${types.EDIT_ORDERS}_PENDING`:
       return {
         ...state,
         isLoading: true
       };
-    case `${types.GET_ORDERS}_FULFILLED`:
+   
     case `${types.POST_ORDERS}_FULFILLED`:
     case `${types.EDIT_ORDERS}_FULFILLED`:
         return {
           ...state,
-          isLoading: false,
+          isRedLoading : false,
           isSuccess: true,
           rooms: action.payload.data.data
         };
+    case `${types.GET_ORDERS}_FULFILLED`:
     case `${types.GET_ROOMS}_FULFILLED`:
       return {
         ...state,

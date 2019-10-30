@@ -2,7 +2,7 @@ const models = require('../models')
 const Customers = models.customers
 
 
-const ip = `http://192.168.1.41:5000/`
+const ip = `http://192.168.1.108:5000/`
 
 exports.index = (req, res) => {
     let query
@@ -20,7 +20,8 @@ exports.store = (req, res) => {
         name : req.body.name,
         //image : ip + req.file.path,
         identity_number : req.body.identity_number,
-        phone_number: req.body.phone_number
+        phone_number: req.body.phone_number,
+        image :ip + req.file.path,
     }
     Customers.create(data).then(data=> {
         res.send({
@@ -35,7 +36,8 @@ exports.update = (req, res) => {
         name : req.body.name,
         //image : ip + req.file.path,
         identity_number : req.body.identity_number,
-        phone_number: req.body.phone_number
+        phone_number: req.body.phone_number,
+        image :ip + req.file.path,
     }
     Customers.update(
         data,

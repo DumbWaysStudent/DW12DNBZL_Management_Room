@@ -7,7 +7,7 @@
  */
 
 import React, { Component } from 'react';
-import { Container,Text,Header, Body, Content, Left, Input, Button,Label,ListItem,Title,Right} from 'native-base'
+import { Container,Text,Header, Body, Content, Left, Input, Button,Label,ListItem,Title,Fab} from 'native-base'
 import {StyleSheet,Image,TouchableOpacity,View,TextInput,TouchableHighlight,Dimensions,FlatList} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import axios from 'axios'
@@ -31,7 +31,8 @@ class room extends Component{
       tokening : '',
       userID : 0,
       tempid : 0,
-      tempname : ''
+      tempname : '',
+      fab : false,
     }
   }
   async componentDidMount(){
@@ -44,6 +45,7 @@ class room extends Component{
      this.props.getRooms()
    }
  
+
    async retrieveSessionToken() {
      try {
        const tokening = await AsyncStorage.getItem('userToken');
@@ -62,10 +64,13 @@ class room extends Component{
  
    allPage(image) {
     return (
-      <ListItem style={{borderColor : 'white'}}>
+      <ListItem >
+        {(image.plusimage)?  <Button success style={styles.roombutton} onPress ={()=> this.setState({modal : true})}>
+        <Icon name='plus' size={50} style={{color : '#673ab7'}}></Icon>
+        </Button>:
         <Button success style={styles.roombutton} onPress={()=> this.edit(image.id,image.name)}>
-        <Text>{image.name}</Text>
-        </Button>
+        <Text style={styles.roomText}>{image.name}</Text>
+        </Button>}
       </ListItem>
     );
   }
@@ -86,28 +91,20 @@ edit(id,name){
     const {rooms} = this.props
     return (
      <Container>
-        <Header>
-          <Left>
-            <Button transparent>
-              <Icon name='arrow-left' size={20} />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Room List</Title>
-          </Body>
+        <Header style={styles.container}>
+          
+            <Title style={styles.headerText}>Room List</Title>
+         
         </Header>
        <View>
       <FlatList
          style={styles.allContainer}
-          data={rooms.rooms} 
+          data={rooms.rooms.concat({plusimage:true})} 
           renderItem={({ item }) => this.allPage(item)}
           keyExtractor={item => item.id}
           numColumns= {4}>
       </FlatList> 
       <View style={{alignSelf: 'center'}}>
-      <Button style={{width : 100}} onPress ={()=> this.setState({modal : true})}>
-        <Text>TAMBAH</Text>
-      </Button>
       </View>
       <Modal isVisible={this.state.modal}
       animationType="slide"
@@ -158,8 +155,10 @@ export default connect(
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
       backgroundColor: '#673ab7',
+    width: Dimensions.get('window').width,
+    borderWidth: 1,
+    borderColor: 'black'
     },
     containerform : {
       justifyContent: 'center',
@@ -168,7 +167,6 @@ const styles = StyleSheet.create({
       height  : 200
     },
     inputContainer: {
-        
         backgroundColor: '#FFFFFF',
         borderRadius:20,
         borderWidth : 2,
@@ -178,7 +176,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems:'center'
     },
-    
+    headerText : {
+      marginTop : 5,
+      fontSize: 30
+    }, 
     inputs:{
         height:45,
         marginLeft:20,
@@ -209,17 +210,15 @@ const styles = StyleSheet.create({
       borderColor : '#673ab7',
       borderWidth : 2
     },
-    foryouButton: {
+    button: {
       backgroundColor: '#673ab7',
-      borderColor : '#673ab7',
-      borderWidth : 2,
-      marginTop : 30
     },
     registerText: {
       color: 'black',
     },
-    loginText: {
+    roomText: {
       color: '#673ab7',
+      fontSize : 20
     },
     foryouText:{
       color : 'white'
@@ -233,9 +232,14 @@ const styles = StyleSheet.create({
     },
     roombutton:{
       height : 70,
+      position : 'relative',
       width : 70,
       marginRight : -22,
       marginBottom : -15,
+      borderRadius : 10,
+      borderColor : '#673ab7',
+      borderWidth : 2,
+      backgroundColor: '#7CFC00',
       justifyContent : 'center',
     }
   });

@@ -8,7 +8,7 @@
 
 import React, { Component } from 'react';
 import { Container, Header, Picker, Text, Body, Content, Title, Left, Right, Button, Label, ListItem } from 'native-base'
-import { StyleSheet, TouchableOpacity, View, TextInput, TouchableHighlight, Dimensions, FlatList } from 'react-native'
+import { StyleSheet, TouchableOpacity, View, TextInput, TouchableHighlight, Dimensions, FlatList, ActivityIndicator } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { connect } from 'react-redux'
 import Modal from 'react-native-modal'
@@ -17,6 +17,7 @@ import * as actionRooms from '../_actions/rooms'
 import * as actionCustomers from '../_actions/customers'
 import CountDown from 'react-native-countdown-component';
 import moment from "moment";
+import SafeAreaView from 'react-native-safe-area-view';
 
 
 class checkin extends Component {
@@ -57,6 +58,40 @@ class checkin extends Component {
     })
   }
 
+  renderButton(image) {
+    if (this.props.rooms.isLoading) {
+      return (
+        <TouchableHighlight onPress={() => this.checkin(image.id, image.name)} style={styles.roombutton}>
+          <ActivityIndicator size="small" color="#0000ff" ></ActivityIndicator>
+        </TouchableHighlight>)
+    } else {
+      return (
+        <TouchableHighlight onPress={() => this.checkin(image.id, image.name)} style={styles.roombutton}>
+          <Text style={styles.tittleall}>{image.name}</Text>
+        </TouchableHighlight>)
+    }
+  }
+  renderRedButton(image) {
+    if (this.props.rooms.isRedLoading) {
+      return (
+        <Button onPress={() => this.checkout(image.orderid.id)} style={styles.noroombutton}>
+          <ActivityIndicator size="small" color="#0000ff" ></ActivityIndicator>
+        </Button>)
+    } else {
+      return (
+        <Button onPress={() => this.checkout(image.orderid.id)} style={styles.noroombutton}>
+          <Text style={styles.tittleall}>{image.name}</Text>
+          <CountDown
+            until={moment(image.orderid.order_end_time).diff(moment().format()) / 1000}
+            //until={moment(moment().format()).diff(image.orderid.order_end_time)}
+            onFinish={() => this.timeout(image.orderid.id)}
+            onPress={() => alert('hello')}
+            size={9}
+          />
+        </Button>)
+    }
+  }
+
   timeout(id) {
     this.props.editOrders(id)
   }
@@ -91,52 +126,33 @@ class checkin extends Component {
       console.log(error)
     }
   }
-
   allPage(image) {
     return (
-      <ListItem style={{ borderColor: 'white' }}>
+      <ListItem style={styles.listItemContainer}>
         {(image.order_id !== null) ?
           (image.orderid.is_booked !== true) ?
-            <Button success onPress={() => this.checkin(image.id, image.name)} style={styles.roombutton}>
-              <Text style={styles.tittleall}>{image.name}</Text>
-            </Button> :
-            <Button danger onPress={() => this.checkout(image.orderid.id)} style={styles.roombutton}>
-              <Text style={styles.tittleall}>{image.name}</Text>
-              <CountDown
-                until={moment(image.orderid.order_end_time).diff(moment().format()) / 1000}
-                //until={moment(moment().format()).diff(image.orderid.order_end_time)}
-                onFinish={() => this.timeout(image.orderid.id)}
-                onPress={() => alert('hello')}
-                size={9}
-              />
-            </Button> : <Button success onPress={() => this.checkin(image.id, image.name)} style={styles.roombutton} >
-            <Text style={styles.tittleall}>{image.name}</Text>
-          </Button>}
+            this.renderButton(image) :
+            this.renderRedButton(image)
+          : this.renderButton(image)}
       </ListItem>
     );
   }
-
   render() {
     const { rooms, customers } = this.props
     return (
       <Container>
-        <Header>
-          <Left>
-            <Button transparent>
-              <Icon name='arrow-left' size={20} />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Room List</Title>
-          </Body>
+        <Header style={styles.container}>
+            <Title style={styles.headerText}>Order Status</Title>
         </Header>
-        <FlatList
-          style={styles.allContainer}
-          data={rooms.rooms}
-          renderItem={({ item }) => this.allPage(item)}
-          keyExtractor={item => item.id}
-          numColumns={3}>
-        </FlatList>
+        <SafeAreaView>
+          <FlatList
+            contentContainerStyle={styles.allContainer}
+            data={rooms.rooms}
+            renderItem={({ item }) => this.allPage(item)}
+            keyExtractor={item => item.id}
+            numColumns={3}>
+          </FlatList>
+        </SafeAreaView>
         <Modal isVisible={this.state.modal} animationType="slide" transparent={true}>
           <View style={styles.containerform}>
             <View>
@@ -148,7 +164,7 @@ class checkin extends Component {
                   enabled={(this.state.checkout) ? false : true}
                   mode="dropdown"
                   iosIcon={<Icon name="arrow-down" />}
-                  placeholder="Select your SIM"
+                  placeholder="Select Customers"
                   placeholderStyle={{ color: "#bfc6ea" }}
                   placeholderIconColor="#007aff"
                   style={{ width: 200 }}
@@ -156,7 +172,7 @@ class checkin extends Component {
                   onValueChange={this.onValueChange.bind(this)}
                 >
                   {customers.customers.map((key, i) => {
-                    return (<Picker.Item label={key.name} value={key.id}></Picker.Item>)
+                    return (<Picker.Item label={key.name} value={key.id} key={i}></Picker.Item>)
                   })}
                 </Picker>
               </View>
@@ -212,9 +228,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black'
   },
-  header: {
-    backgroundColor: '#673ab7',
-  },
   containerform: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -242,96 +255,49 @@ const styles = StyleSheet.create({
   labelText: {
     fontSize: 50,
   },
-  itemStyle: {
-    fontSize: 15,
-    height: 75,
-    color: 'black',
-    textAlign: 'center',
-    fontWeight: 'bold'
-  },
+  headerText : {
+    marginTop : 5,
+    fontSize: 30
+  }, 
   inputs: {
     height: 45,
     marginLeft: 20,
     borderBottomColor: '#FFFFFF',
     flex: 1,
   },
-  inputIcon: {
-    marginLeft: 15,
+  allContainer: {
+    marginTop: 20,
+    marginLeft: -10,
     justifyContent: 'center'
   },
-  seachIcon: {
-    marginRight: 5
-  },
-  logo: {
-    flex: 1,
-    width: "100%",
-    height: 200,
-    resizeMode: "contain",
-    alignSelf: 'center'
-  },
-  favoriteContainer: {
-    marginHorizontal: 2,
-    backgroundColor: 'white',
-    height: 128,
-    width: 80,
-    marginTop: 5,
-  },
-  favoriteImage: {
-    width: 80,
-    height: 100,
-    borderWidth: 2,
-    borderColor: 'black',
-  },
-  favoriteText: {
-    fontSize: 10,
-    textAlign: 'center',
-    color: 'black'
-  },
-  allContainer: {
-    marginLeft: -10,
-  },
   listItemContainer: {
-    width: Dimensions.get('window').width,
-    marginTop: 5,
-    backgroundColor: 'white'
-  },
-  subMenuTextContainer: {
-    marginLeft: 15,
-    marginTop: 10,
-    marginBottom: 5
-  },
-  text: {
-    fontSize: 18,
-    color: 'black',
-  },
-  image: {
-    flex: 1,
-    width: 70,
-    height: 70,
-    resizeMode: 'contain',
-  },
-  favoritebutton: {
-    height: 20,
-    width: 70,
-    marginLeft: 12,
-    backgroundColor: '#ee532f'
+    borderColor: 'white',
+    marginHorizontal: -30,
+    marginVertical: -12
   },
   tittleall: {
     fontSize: 25,
-    marginBottom: 10
-  },
-  favoritebuttondisabled: {
-    height: 20,
-    width: 70,
-    marginLeft: 12,
-    backgroundColor: 'black'
+    marginBottom: 10,
+    color : '#673ab7',
+    
   },
   roombutton: {
     height: 110,
     width: 110,
     borderRadius: 10,
-    marginRight: -30,
-    marginBottom: -25,
+    borderColor : '#673ab7',
+    borderWidth : 2,
+    backgroundColor:'#7CFC00',
+    justifyContent: 'center',
+    flexDirection: 'column'
+  },
+  noroombutton: {
+    borderColor : '#673ab7',
+    borderWidth : 2,
+    height: 110,
+    width: 110,
+    borderRadius: 10,
+    backgroundColor: '#8FBC8F',
     justifyContent: 'center',
     flexDirection: 'column'
   }

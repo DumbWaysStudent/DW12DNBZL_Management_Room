@@ -9,7 +9,9 @@
 import React, { Component } from 'react';
 
 import { createAppContainer, createSwitchNavigator, NavigationActions } from 'react-navigation'
+import { StyleSheet, TouchableOpacity, View, TextInput, TouchableHighlight, Dimensions, FlatList } from 'react-native'
 import { createBottomTabNavigator } from 'react-navigation-tabs'
+import Icon from 'react-native-vector-icons/FontAwesome'
 import loginScreen from './src/screens/loginScreen'
 import checkin from './src/screens/checkin'
 import room from './src/screens/room'
@@ -23,16 +25,56 @@ const switchContainer = createSwitchNavigator({
   checkin: {
     screen: createBottomTabNavigator({
       checkin: {
-        screen: checkin
+        screen: checkin,
+        navigationOptions : {
+          tabBarLabel : 'Checkin',
+          tabBarIcon : ({tintColor}) =><Icon name='calendar' size={30} color = {tintColor}></Icon>,
+          tabBarOptions : {
+            activeTintColor : 'white',
+            inactiveBackgroundColor : '#673ab7',
+            activeBackgroundColor : '#673ab7',
+            style : {
+            borderRadius : 50,
+             
+            }
+          }
+        }
       },
       room: {
-        screen: room
+        screen: room,
+        navigationOptions : {
+          tabBarLabel : 'Rooms',
+          tabBarIcon : ({tintColor}) =><Icon name='th' size={30} color = {tintColor}></Icon>,
+          tabBarOptions : {
+            activeTintColor : 'white',
+            inactiveBackgroundColor : '#673ab7',
+            activeBackgroundColor : '#673ab7'
+          }
+        }
       },
       customer: {
-        screen: customer
+        screen: customer,
+        navigationOptions : {
+          tabBarLabel : 'Customers',
+          tabBarIcon : ({tintColor}) =><Icon name='user' size={30} color = {tintColor}></Icon>,
+          tabBarOptions : {
+            activeTintColor : 'white',
+            inactiveBackgroundColor : '#673ab7',
+            activeBackgroundColor : '#673ab7'
+          }
+        }
       },
       setting: {
-        screen: setting
+        screen: setting,
+        navigationOptions : {
+          tabBarLabel : 'Setting',
+          tabBarIcon : ({tintColor}) =><Icon name='cog' size={30} color = {tintColor}></Icon>,
+          tabBarOptions : {
+            activeTintColor : 'white',
+            inactiveBackgroundColor : '#673ab7',
+            activeBackgroundColor : '#673ab7'
+          }
+        }
       }
     })
   }

@@ -7,4 +7,8 @@ export const handleGetAdmins= (id) => ({
   payload: axios.get(`${ip}/admins/${id}`)
 });
 
+export const handleLogin= (id) => ({
+  type: types.LOGIN,
+  payload: axios.get(`${ip}/Login`)
+});
 
